@@ -22,9 +22,7 @@ async fn main() {
 
     let mail_service = MailService::new(&mail_service_url).await;
 
-    let api = api::api();
+    let api = api::api(mail_service);
 
-    warp::serve(api)
-        .run(([127, 0, 0, 1], port))
-        .await;
+    warp::serve(api).run(([127, 0, 0, 1], port)).await;
 }
