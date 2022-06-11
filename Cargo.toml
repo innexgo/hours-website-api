@@ -1,5 +1,5 @@
 [package]
-name = "hours-website-api"
+name = "hours-contact-service"
 version = "0.1.0"
 edition = "2021"
 

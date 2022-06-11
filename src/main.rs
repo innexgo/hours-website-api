@@ -23,8 +23,7 @@ pub enum AppError {
 
 impl error::ResponseError for AppError {
     fn error_response(&self) -> HttpResponse {
-        HttpResponse::build(self.status_code())
-            .json(self)
+        HttpResponse::build(self.status_code()).json(Err::<(), _>(self))
     }
 
     fn status_code(&self) -> StatusCode {
@@ -55,7 +54,6 @@ async fn main() -> std::io::Result<()> {
         port,
         mail_service_url,
     } = Opts::parse();
-
 
     HttpServer::new(move || {
         App::new()
