@@ -1,10 +1,26 @@
-use super::api;
-use mail_service_api::client::MailService;
+use super::AppError;
 
+use actix_web::{web, Responder};
+use mail_service_api::client::MailService;
+use serde::{Deserialize, Serialize};
+
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ContactRequest {
+    pub name: String,
+    pub email: String,
+    pub school: String,
+    pub position: String,
+    pub message: String,
+}
+
+#[actix_web::post("/public/send_contact_email")]
 pub async fn send_contact_email(
-    req: api::ContactRequest,
-    mail_service: MailService,
-) -> Result<impl warp::Reply, warp::Rejection> {
+    req: web::Json<ContactRequest>,
+    mail_service_url: web::Data<String>,
+) -> Result<impl Responder, AppError> {
+    let mail_service = MailService::new(&mail_service_url).await;
+
     let _ = mail_service
         .mail_new(mail_service_api::request::MailNewProps {
             request_id: 0,
@@ -22,22 +38,5 @@ pub async fn send_contact_email(
         })
         .await;
 
-    Ok(warp::reply::reply())
-}
-
-pub async fn send_refer_email(
-    req: api::ReferRequest,
-    mail_service: MailService,
-) -> Result<impl warp::Reply, warp::Rejection> {
-    let _ = mail_service
-        .mail_new(mail_service_api::request::MailNewProps {
-            request_id: 0,
-            destination: "innexgo@gmail.com".to_owned(),
-            topic: "Innexgo Sales: New Refer".to_owned(),
-            title: "New site visit using:<br/>".to_owned(),
-            content: format!("refer code: <code>{}</code><br/>", req.ref_code),
-        })
-        .await;
-
-    Ok(warp::reply::reply())
+    Ok(web::Json("hi"))
 }
