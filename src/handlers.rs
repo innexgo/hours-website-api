@@ -38,5 +38,5 @@ pub async fn send_contact_email(
         })
         .await;
 
-    Ok(web::Json(Ok::<_, ()>("hi")))
+    Ok(web::Json("hi"))
 }
